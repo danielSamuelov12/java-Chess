@@ -32,4 +32,9 @@ public class Knight implements Piece {
     public char getSymbol() {
         return this.color.equals("white") ? 'N' : 'n';
     }
+    public Piece clone() {
+        return new Knight(this.color, this.x, this.y);
+    }
+}
+
 }
