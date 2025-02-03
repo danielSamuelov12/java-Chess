@@ -82,4 +82,25 @@ public class Board {
         }
         return false;
     }
+        public void undo() {
+        if (!history.isEmpty()) {
+            Board previousBoard = history.pop();
+            this.board = previousBoard.board;
+        }
+    }
+
+    public Board clone() {
+        Board clonedBoard = new Board();
+        for (int x = 0; x < 8; x++) {
+            for (int y = 0; y < 8; y++) {
+                Piece piece = this.getPiece(x, y);
+                if (piece != null) {
+                    clonedBoard.setPiece(x, y, piece.clone());
+                }
+            }
+        }
+        return clonedBoard;
+    }
+}
+
 }
