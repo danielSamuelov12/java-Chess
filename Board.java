@@ -52,7 +52,6 @@ public class Board {
                 }
             }
             System.out.println();
-
         }
         System.out.println("\n");
     }
@@ -82,25 +81,16 @@ public class Board {
         }
         return false;
     }
-        public void undo() {
-        if (!history.isEmpty()) {
-            Board previousBoard = history.pop();
-            this.board = previousBoard.board;
-        }
-    }
 
     public Board clone() {
-        Board clonedBoard = new Board();
-        for (int x = 0; x < 8; x++) {
-            for (int y = 0; y < 8; y++) {
-                Piece piece = this.getPiece(x, y);
-                if (piece != null) {
-                    clonedBoard.setPiece(x, y, piece.clone());
+        Board newBoard = new Board();
+        for (int i = 0; i < 8; i++) {
+            for (int j = 0; j < 8; j++) {
+                if (this.board[i][j] != null) {
+                    newBoard.setPiece(i, j, this.board[i][j].clone());
                 }
             }
         }
-        return clonedBoard;
+        return newBoard;
     }
-}
-
 }
