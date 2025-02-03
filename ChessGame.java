@@ -32,15 +32,12 @@ public class ChessGame {
 
             Piece piece = board.getPiece(startX, startY);
             if (piece != null && piece.getColor().equals(currentPlayer.getColor()) && piece.isValidMove(endX, endY, board)) {
-                    board.setPiece(endX, endY, piece);
-                    board.setPiece(startX, startY, null);
-
+                board.setPiece(endX, endY, piece);
+                board.setPiece(startX, startY, null);
+            } else {
+                System.out.println("Invalid move, try again.");
+                continue;
             }
-            else {
-                    System.out.println("Invalid move, try again.");
-                    continue;
-                }
-
 
             if (checkGameOver()) {
                 break;
