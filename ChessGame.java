@@ -1,14 +1,18 @@
+import java.util.Stack;
+
 public class ChessGame {
     private Player whitePlayer;
     private Player blackPlayer;
     private Board board;
     private Player currentPlayer;
+    private Stack<Board> history;
 
     public ChessGame(Player whitePlayer, Player blackPlayer) {
         this.whitePlayer = whitePlayer;
         this.blackPlayer = blackPlayer;
         this.board = new Board();
         this.currentPlayer = whitePlayer;
+        this.history = new Stack<>();
     }
 
     public ChessGame(Player whitePlayer) {
@@ -16,6 +20,7 @@ public class ChessGame {
         this.blackPlayer = new AIPlayer(false);
         this.board = new Board();
         this.currentPlayer = whitePlayer;
+        this.history = new Stack<>();
     }
 
     public void play() {
@@ -23,32 +28,53 @@ public class ChessGame {
             board.printBoard();
             System.out.println("It's " + currentPlayer.getColor() + "'s turn.");
             String move = currentPlayer.getMove(board);
-
+            if (move.equalsIgnoreCase("undo")) {
+                undoMove();
+                continue;
+            }
             String[] moveParts = move.split(" ");
-            int startX = Integer.parseInt(moveParts[0]);
-            int startY = Integer.parseInt(moveParts[1]);
-            int endX = Integer.parseInt(moveParts[2]);
-            int endY = Integer.parseInt(moveParts[3]);
-
+            if (moveParts.length != 4) {
+                System.out.println("Invalid move format, try again.");
+                continue;
+            }
+            int startX, startY, endX, endY;
+            try {
+                startX = Integer.parseInt(moveParts[0]);
+                startY = Integer.parseInt(moveParts[1]);
+                endX = Integer.parseInt(moveParts[2]);
+                endY = Integer.parseInt(moveParts[3]);
+            } catch (NumberFormatException e) {
+                System.out.println("Invalid move numbers, try again.");
+                continue;
+            }
             Piece piece = board.getPiece(startX, startY);
-            if (piece != null && piece.getColor().equals(currentPlayer.getColor()) && piece.isValidMove(endX, endY, board)) {
-                board.setPiece(endX, endY, piece);
-                board.setPiece(startX, startY, null);
-            } else {
+            if (piece == null || !piece.getColor().equals(currentPlayer.getColor()) || !piece.isValidMove(endX, endY, board)) {
                 System.out.println("Invalid move, try again.");
                 continue;
             }
-
+            history.push(board.clone());
+            board.setPiece(endX, endY, piece);
+            board.setPiece(startX, startY, null);
             if (checkGameOver()) {
+                board.printBoard();
                 break;
             }
-
             switchPlayer();
         }
     }
 
     private void switchPlayer() {
         currentPlayer = (currentPlayer == whitePlayer) ? blackPlayer : whitePlayer;
+    }
+
+    public void undoMove() {
+        if (!history.isEmpty()) {
+            board = history.pop();
+            System.out.println("Undo successful.");
+            switchPlayer();
+        } else {
+            System.out.println("No moves to undo.");
+        }
     }
 
     private boolean checkGameOver() {
@@ -58,7 +84,6 @@ public class ChessGame {
                 return true;
             } else {
                 System.out.println("Check! " + currentPlayer.getColor() + " is in check.");
-                return false;
             }
         }
         return false;
@@ -75,15 +100,12 @@ public class ChessGame {
                                 Piece tempPiece = board.getPiece(newRow, newCol);
                                 board.setPiece(newRow, newCol, piece);
                                 board.setPiece(row, col, null);
-
-                                if (!board.isKingInCheck(color)) {
-                                    board.setPiece(row, col, piece);
-                                    board.setPiece(newRow, newCol, tempPiece);
-                                    return false;
-                                }
-
+                                boolean inCheck = board.isKingInCheck(color);
                                 board.setPiece(row, col, piece);
                                 board.setPiece(newRow, newCol, tempPiece);
+                                if (!inCheck) {
+                                    return false;
+                                }
                             }
                         }
                     }
