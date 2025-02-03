@@ -27,4 +27,9 @@ public class King implements Piece {
     public char getSymbol() {
         return this.color.equals("white") ? 'K' : 'k';
     }
+    public Piece clone() {
+        return new King(this.color, this.x, this.y);
+    }
+}
+
 }
