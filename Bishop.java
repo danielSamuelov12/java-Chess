@@ -46,4 +46,9 @@ public class Bishop implements Piece {
     public char getSymbol() {
         return this.color.equals("white") ? 'B' : 'b';
     }
+    public Piece clone() {
+        return new Bishop(this.color, this.x, this.y);
+    }
+}
+
 }
