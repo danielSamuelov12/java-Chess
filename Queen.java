@@ -33,4 +33,9 @@ public class Queen implements Piece {
     public char getSymbol() {
         return this.color.equals("white") ? 'Q' : 'q';
     }
+    public Piece clone() {
+        return new Queen(this.color, this.x, this.y);
+    }
+}
+
 }
