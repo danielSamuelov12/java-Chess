@@ -48,4 +48,9 @@ public class Pawn implements Piece {
     public char getSymbol() {
         return this.color.equals("white") ? 'P' : 'p';
     }
+    public Piece clone() {
+        return new Pawn(this.color, this.x, this.y);
+    }
+}
+
 }
