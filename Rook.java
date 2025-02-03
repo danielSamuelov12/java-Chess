@@ -50,4 +50,9 @@ public class Rook implements Piece {
     public char getSymbol() {
         return this.color.equals("white") ? 'R' : 'r';
     }
+    public Piece clone() {
+        return new Rook(this.color, this.x, this.y);
+    }
+}
+
 }
